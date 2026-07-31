@@ -18,6 +18,8 @@ npm run dev
    (Supabase 대시보드 > Project Settings > API 에서 복사)
 
 2. 개발 서버를 다시 시작합니다. Vite 는 환경 변수를 시작 시점에만 읽습니다.
+3. `supabase/schema.sql` 을 Supabase SQL Editor 에 붙여넣어 실행합니다.
+4. Authentication > Providers 에서 Anonymous sign-ins 를 켭니다.
 
 `.env.local` 은 `.gitignore` 의 `*.local` 규칙으로 커밋되지 않습니다.
 
