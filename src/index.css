@@ -373,6 +373,37 @@ tbody td {
 
 .tile__body {
   padding: var(--s-md) var(--s-lg) var(--s-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-sm);
+}
+
+/* 끝낸 활동은 물러나 있게 한다. 색을 빼고 흐리게. */
+.tile--done {
+  opacity: 0.55;
+}
+
+.tile--done .tile__band {
+  filter: grayscale(1);
+}
+
+.tile--done:hover {
+  opacity: 0.85;
+}
+
+/* 인증 도장. 살짝 기울여 손으로 찍은 느낌을 준다. */
+.stamp {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--accent-green);
+  border: 2px solid var(--accent-green);
+  border-radius: var(--r-sm);
+  padding: 3px 8px;
+  transform: rotate(-8deg);
+  opacity: 0.85;
 }
 
 .class-row {

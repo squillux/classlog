@@ -30,6 +30,22 @@ export async function saveSubmission(
   if (error) throw new Error(error.message)
 }
 
+/**
+ * 이 학생이 이미 낸 활동의 id 목록. 같은 활동을 여러 번 냈어도 한 번만 센다.
+ * RLS 가 자기 제출물만 보여주므로 남의 것은 섞이지 않는다.
+ */
+export async function listSubmittedActivityIds(studentId: string): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('submissions')
+    .select('activity_id')
+    .eq('student_id', studentId)
+  if (error) throw new Error(error.message)
+
+  const seen = new Set<string>()
+  for (const row of (data ?? []) as { activity_id: string }[]) seen.add(row.activity_id)
+  return [...seen]
+}
+
 export async function listSubmissions(classId: string): Promise<SubmissionRow[]> {
   const { data, error } = await supabase
     .from('submissions')
