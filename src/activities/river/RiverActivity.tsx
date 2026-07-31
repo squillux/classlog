@@ -1,47 +1,30 @@
 import { useState } from 'react'
 import type { ActivityProps } from '../types'
 import { buildPayload } from '../shared/payload'
-import ReflectionForm from '../shared/ReflectionForm'
-import {
-  INITIAL, ITEM_LABEL, canCarry, isSolved, move, moveLabel, violation,
-  violationMessage, type Item, type RiverState,
-} from './rules'
+import RuleBlanks from './RuleBlanks'
+import Crossing from './Crossing'
+import FinalQuiz from './FinalQuiz'
+import type { FinalResult } from './grading'
 
-const ITEMS: Item[] = ['wolf', 'goat', 'cabbage']
-const QUESTION = '이 문제를 풀 때 꼭 기억해야 하는 규칙은 무엇이었나요?'
+type Stage = 'rules' | 'crossing' | 'final'
+
+const STEPS: { stage: Stage; label: string }[] = [
+  { stage: 'rules', label: '규칙 찾기' },
+  { stage: 'crossing', label: '강 건너기' },
+  { stage: 'final', label: '정리하기' },
+]
 
 export default function RiverActivity({ onSubmit }: ActivityProps) {
   const [startedAt] = useState(() => Date.now())
-  const [state, setState] = useState<RiverState>(INITIAL)
-  const [carried, setCarried] = useState<Item | null>(null)
+  const [stage, setStage] = useState<Stage>('rules')
+
+  // 앞 단계의 결과를 모아 뒀다가 마지막에 한 번에 낸다.
+  const [ruleAnswers, setRuleAnswers] = useState<Record<string, string>>({})
+  const [ruleAttempts, setRuleAttempts] = useState(0)
   const [moves, setMoves] = useState<string[]>([])
   const [violations, setViolations] = useState(0)
-  const [message, setMessage] = useState<string | null>(null)
 
-  const solved = isSolved(state)
-
-  function go() {
-    const next = move(state, carried)
-    const bad = violation(next)
-    if (bad) {
-      // 되돌린다. 벌점 대신 이유를 알려준다.
-      setViolations((n) => n + 1)
-      setMessage(violationMessage(bad))
-      setCarried(null)
-      return
-    }
-    setMoves((prev) => [...prev, moveLabel(carried, state.farmer)])
-    setState(next)
-    setCarried(null)
-    setMessage(null)
-  }
-
-  function reset() {
-    setState(INITIAL)
-    setCarried(null)
-    setMoves([])
-    setMessage(null)
-  }
+  const current = STEPS.findIndex((s) => s.stage === stage)
 
   return (
     <section className="stack">
@@ -49,64 +32,66 @@ export default function RiverActivity({ onSubmit }: ActivityProps) {
         <p className="eyebrow">활동</p>
         <h2>강 건너기</h2>
         <p className="muted">
-          농부가 늑대·양·양배추를 건너편으로 옮깁니다. 배에는 하나만 태울 수 있어요.
+          농부가 늑대·염소·양배추를 건너편으로 옮깁니다.
         </p>
       </div>
 
-      <div className="game__board river">
-        {(['left', 'right'] as const).map((side) => (
-          <div key={side} className="river__bank">
-            <p className="eyebrow">{side === 'left' ? '이쪽 편' : '건너편'}</p>
-            <div className="chip-row">
-              {state.farmer === side && <span className="chip chip--static">농부</span>}
-              {ITEMS.filter((item) => state.positions[item] === side).map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  className="chip"
-                  aria-pressed={carried === item}
-                  disabled={!canCarry(state, item) || solved}
-                  onClick={() => setCarried(carried === item ? null : item)}
-                >
-                  {ITEM_LABEL[item]}
-                </button>
-              ))}
-            </div>
-          </div>
+      <ol className="steps plain-list">
+        {STEPS.map((step, i) => (
+          <li
+            key={step.stage}
+            className={
+              i === current ? 'steps__item steps__item--now'
+                : i < current ? 'steps__item steps__item--done' : 'steps__item'
+            }
+            aria-current={i === current ? 'step' : undefined}
+          >
+            <span className="steps__num">{i + 1}</span> {step.label}
+          </li>
         ))}
-      </div>
+      </ol>
 
-      {message && <p className="notice notice--error" role="alert">{message}</p>}
-
-      {!solved && (
-        <div className="chip-row">
-          <button type="button" className="btn btn--primary" onClick={go}>건너가기</button>
-          <button type="button" className="btn btn--utility" onClick={reset}>처음부터</button>
-        </div>
+      {stage === 'rules' && (
+        <RuleBlanks
+          onDone={(answers, attempts) => {
+            setRuleAnswers(answers)
+            setRuleAttempts(attempts)
+            setStage('crossing')
+          }}
+        />
       )}
 
-      <div className="game__board stack stack--tight">
-        <p className="eyebrow">지나온 길</p>
-        {moves.length === 0 ? (
-          <p className="faint">아직 아무도 건너지 않았어요.</p>
-        ) : (
-          <p className="game__status">{moves.join(' · ')}</p>
-        )}
-      </div>
+      {stage === 'crossing' && (
+        <>
+          <Crossing
+            onDone={(doneMoves, doneViolations) => {
+              setMoves(doneMoves)
+              setViolations(doneViolations)
+            }}
+          />
+          {moves.length > 0 && (
+            <button type="button" className="btn btn--primary" onClick={() => setStage('final')}>
+              정리하러 가기
+            </button>
+          )}
+        </>
+      )}
 
-      {solved && <p className="notice notice--ok">모두 무사히 건넜습니다!</p>}
-
-      {solved && (
-        <ReflectionForm
-          question={QUESTION}
-          hint="규칙을 어겼을 때 무엇이 사라졌는지 떠올려 보세요."
-          onSubmit={(note) =>
+      {stage === 'final' && (
+        <FinalQuiz
+          onSubmit={(result: FinalResult) =>
             onSubmit(
               buildPayload(startedAt, {
                 solved: true,
                 attempts: violations + 1,
-                result: { moves, violations },
-                note,
+                result: {
+                  rules: { answers: ruleAnswers, attempts: ruleAttempts },
+                  moves,
+                  violations,
+                  quiz: result,
+                },
+                // 서술형 답을 교사 화면에서 바로 읽을 수 있게 note 로 올린다.
+                note: result.answers.find((a) => a.questionId === 'why-goat')?.value ?? '',
               }),
             )
           }

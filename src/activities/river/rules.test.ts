@@ -34,13 +34,13 @@ describe('canCarry', () => {
 })
 
 describe('violation', () => {
-  it('농부가 없는 쪽에 늑대와 양이 있으면 양이 잡아먹힌다', () => {
+  it('농부가 없는 쪽에 늑대와 염소가 있으면 염소가 잡아먹힌다', () => {
     // 농부가 양배추만 데리고 건너가 늑대와 양을 남긴다.
     const state = move(INITIAL, 'cabbage')
     expect(violation(state)).toBe('goat')
   })
 
-  it('농부가 없는 쪽에 양과 양배추가 있으면 양배추가 먹힌다', () => {
+  it('농부가 없는 쪽에 염소와 양배추가 있으면 양배추가 먹힌다', () => {
     const state = move(INITIAL, 'wolf')
     expect(violation(state)).toBe('cabbage')
   })
@@ -78,8 +78,8 @@ describe('isSolved', () => {
 
 describe('moveLabel', () => {
   it('태운 것과 방향을 적는다', () => {
-    expect(moveLabel('goat', 'left')).toBe('양:건너감')
-    expect(moveLabel('goat', 'right')).toBe('양:돌아옴')
+    expect(moveLabel('goat', 'left')).toBe('염소:건너감')
+    expect(moveLabel('goat', 'right')).toBe('염소:돌아옴')
   })
 
   it('아무것도 안 태우면 혼자라고 적는다', () => {
@@ -109,8 +109,8 @@ describe('SOLUTION', () => {
       state = move(state, carried)
     }
     expect(labels).toEqual([
-      '양:건너감', '혼자:돌아옴', '늑대:건너감', '양:돌아옴',
-      '양배추:건너감', '혼자:돌아옴', '양:건너감',
+      '염소:건너감', '혼자:돌아옴', '늑대:건너감', '염소:돌아옴',
+      '양배추:건너감', '혼자:돌아옴', '염소:건너감',
     ])
   })
 })

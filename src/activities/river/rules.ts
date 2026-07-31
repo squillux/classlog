@@ -8,9 +8,18 @@ export type RiverState = {
 
 export const ITEM_LABEL: Record<Item, string> = {
   wolf: '늑대',
-  goat: '양',
+  goat: '염소',
   cabbage: '양배추',
 }
+
+export const ITEM_EMOJI: Record<Item, string> = {
+  wolf: '🐺',
+  goat: '🐐',
+  cabbage: '🥬',
+}
+
+export const FARMER_EMOJI = '🧑‍🌾'
+export const BOAT_EMOJI = '🛶'
 
 export const INITIAL: RiverState = {
   farmer: 'left',
@@ -44,8 +53,8 @@ export function violation(state: RiverState): Item | null {
 
 export function violationMessage(item: Item): string {
   return item === 'goat'
-    ? '농부가 없으면 늑대가 양을 잡아먹습니다.'
-    : '농부가 없으면 양이 양배추를 먹습니다.'
+    ? '농부가 없으면 늑대가 염소를 잡아먹습니다.'
+    : '농부가 없으면 염소가 양배추를 먹습니다.'
 }
 
 export function isSolved(state: RiverState): boolean {
