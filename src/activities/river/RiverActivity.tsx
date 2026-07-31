@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import type { ActivityProps } from '../types'
 import { buildPayload } from '../shared/payload'
+import QuestionSet from '../shared/QuestionSet'
+import type { QuizResult } from '../shared/questions'
 import RuleBlanks from './RuleBlanks'
 import Crossing from './Crossing'
-import FinalQuiz from './FinalQuiz'
-import type { FinalResult } from './grading'
+import { FINAL_QUESTIONS } from './content'
 
 type Stage = 'rules' | 'crossing' | 'final'
 
@@ -78,8 +79,11 @@ export default function RiverActivity({ onSubmit }: ActivityProps) {
       )}
 
       {stage === 'final' && (
-        <FinalQuiz
-          onSubmit={(result: FinalResult) =>
+        <QuestionSet
+          questions={FINAL_QUESTIONS}
+          eyebrow="3단계 · 정리하기"
+          title="무엇을 알아냈는지 정리해 봅시다."
+          onSubmit={(result: QuizResult) =>
             onSubmit(
               buildPayload(startedAt, {
                 solved: true,

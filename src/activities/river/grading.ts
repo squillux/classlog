@@ -1,4 +1,4 @@
-import type { Blank, FinalQuestion } from './content'
+import type { Blank } from './content'
 
 /** 학생이 손으로 치는 값이라 공백과 대소문자를 무시하고 비교한다. */
 function normalize(value: string): string {
@@ -23,30 +23,4 @@ export function allBlanksCorrect(
   answers: Record<string, string>,
 ): boolean {
   return blanks.every((blank) => checkBlank(blank, answers[blank.id] ?? ''))
-}
-
-export type FinalAnswer = { questionId: string; value: string }
-
-export type FinalResult = {
-  answers: FinalAnswer[]
-  /** 객관식만 센다. 서술형은 선생님이 읽는다. */
-  score: number
-  total: number
-}
-
-export function gradeFinal(
-  questions: FinalQuestion[],
-  answers: Record<string, string>,
-): FinalResult {
-  const filled: FinalAnswer[] = questions.map((q) => ({
-    questionId: q.id,
-    value: answers[q.id] ?? '',
-  }))
-
-  const choices = questions.filter((q) => q.kind === 'choice')
-  const score = choices.filter(
-    (q) => Number(answers[q.id]) === q.answerIndex && (answers[q.id] ?? '') !== '',
-  ).length
-
-  return { answers: filled, score, total: choices.length }
 }

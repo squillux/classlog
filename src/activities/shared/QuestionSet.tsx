@@ -1,29 +1,31 @@
 import { useState } from 'react'
-import { FINAL_QUESTIONS } from './content'
-import { gradeFinal, type FinalResult } from './grading'
+import { gradeQuestions, type Question, type QuizResult } from './questions'
 
 type Props = {
-  onSubmit: (result: FinalResult) => void | Promise<void>
+  questions: Question[]
+  eyebrow: string
+  title: string
+  onSubmit: (result: QuizResult) => void | Promise<void>
 }
 
-export default function FinalQuiz({ onSubmit }: Props) {
+export default function QuestionSet({ questions, eyebrow, title, onSubmit }: Props) {
   const [answers, setAnswers] = useState<Record<string, string>>({})
 
   function set(id: string, value: string) {
     setAnswers((prev) => ({ ...prev, [id]: value }))
   }
 
-  // 서술형까지 다 채워야 낼 수 있다. 생각을 적는 것이 이 활동의 목적이다.
-  const ready = FINAL_QUESTIONS.every((q) => (answers[q.id] ?? '').trim() !== '')
+  // 서술형까지 다 채워야 낼 수 있다. 생각을 적는 것이 목적이다.
+  const ready = questions.every((q) => (answers[q.id] ?? '').trim() !== '')
 
   return (
     <div className="stack">
       <div className="stack stack--tight">
-        <p className="eyebrow">3단계 · 정리하기</p>
-        <h3>무엇을 알아냈는지 정리해 봅시다.</h3>
+        <p className="eyebrow">{eyebrow}</p>
+        <h3>{title}</h3>
       </div>
 
-      {FINAL_QUESTIONS.map((question, i) => (
+      {questions.map((question, i) => (
         <fieldset key={question.id} className="card question">
           <legend className="question__prompt">
             <span className="badge">{i + 1}번</span> {question.prompt}
@@ -58,7 +60,7 @@ export default function FinalQuiz({ onSubmit }: Props) {
         type="button"
         className="btn btn--primary"
         disabled={!ready}
-        onClick={() => onSubmit(gradeFinal(FINAL_QUESTIONS, answers))}
+        onClick={() => onSubmit(gradeQuestions(questions, answers))}
       >
         제출하기
       </button>

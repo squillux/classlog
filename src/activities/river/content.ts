@@ -2,6 +2,7 @@
  * 강 건너기 활동의 글감. 문구를 고치려면 이 파일만 손보면 된다.
  * 정답 비교는 앞뒤·사이 공백과 대소문자를 무시한다.
  */
+import type { Question } from '../shared/questions'
 
 export type Blank = {
   id: string
@@ -34,12 +35,8 @@ export const RULE_BLANKS: Blank[] = [
   },
 ]
 
-export type FinalQuestion =
-  | { id: string; kind: 'choice'; prompt: string; choices: string[]; answerIndex: number }
-  | { id: string; kind: 'text'; prompt: string }
-
 /** 3단계 — 다 건넌 뒤 생각을 정리한다. */
-export const FINAL_QUESTIONS: FinalQuestion[] = [
+export const FINAL_QUESTIONS: Question[] = [
   {
     id: 'min-moves',
     kind: 'choice',
