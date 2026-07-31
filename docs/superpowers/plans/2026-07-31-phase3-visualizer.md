@@ -797,11 +797,18 @@ import { render, screen, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Player from './Player'
 
-beforeEach(() => { vi.useFakeTimers() })
-afterEach(() => { vi.useRealTimers() })
-
-/** 가짜 타이머와 함께 쓰려면 userEvent 에 타이머 진행 방법을 알려줘야 한다. */
-const setup = () => userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+/*
+ * 단계 이동은 타이머와 상관없으므로 진짜 타이머로 둔다.
+ * 재생만 가짜 타이머를 쓰고, 그 안에서는 userEvent 대신 fireEvent 를 쓴다.
+ * userEvent 는 클릭 사이에 지연을 두는데 가짜 타이머와 함께 쓰면
+ * 서로를 기다리다 멈춘다. (advanceTimers 나 delay: null 로도 안 풀렸다.)
+ *
+ * 재생 describe 안에서만:
+ *   beforeEach(() => { vi.useFakeTimers() })
+ *   afterEach(() => { vi.useRealTimers() })
+ *   const click = (name) => fireEvent.click(screen.getByRole('button', { name }))
+ *   const tick = (ms) => act(() => { vi.advanceTimersByTime(ms) })
+ */
 
 describe('Player 단계 이동', () => {
   it('앞으로 한 단계 옮긴다', async () => {
