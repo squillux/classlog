@@ -1072,21 +1072,29 @@ type User = ReturnType<typeof userEvent.setup>
  * 버튼을 매번 다시 찾고, 혹시 끝나지 않아도 멈추도록 상한을 둔다.
  * 상한이 없으면 구현이 잘못됐을 때 테스트가 영원히 돈다.
  */
-async function watchToEnd(user: User) {
+function watchToEnd() {
+  // 버튼을 한 번만 찾는다. React 는 다시 그릴 때 같은 DOM 노드를 재사용하므로
+  // disabled 값은 계속 최신이다. 반복마다 다시 찾으면 화면 전체를 140번
+  // 훑게 되어 테스트가 제한 시간에 걸린다.
+  const next = screen.getByRole('button', { name: '다음' }) as HTMLButtonElement
   for (let guard = 0; guard < 500; guard++) {
-    const next = screen.getByRole('button', { name: '다음' }) as HTMLButtonElement
     if (next.disabled) return
-    await user.click(next)
+    fireEvent.click(next)
   }
   throw new Error('끝까지 가지 못했습니다. 다음 버튼이 잠기지 않습니다.')
 }
 
-async function watchAll(user: User) {
+function watchAll() {
   for (const name of ['선택정렬', '버블정렬', '순차 탐색']) {
-    await user.click(screen.getByRole('button', { name: new RegExp(name) }))
-    await watchToEnd(user)
+    fireEvent.click(screen.getByRole('button', { name: new RegExp(name) }))
+    watchToEnd()
   }
 }
+
+// 반복 클릭에는 fireEvent 를 쓴다. 세 알고리즘을 끝까지 보려면 "다음"을
+// 140번쯤 눌러야 하는데 userEvent 의 클릭 시뮬레이션은 그만큼 반복하기에
+// 느려 제한 시간을 넘긴다. 사람의 입력을 흉내 내야 하는 곳(라디오 고르기,
+// 글 쓰기)에서만 userEvent 를 쓴다.
 
 describe('VisualizerActivity', () => {
   it('알고리즘 세 개를 고를 수 있다', () => {
