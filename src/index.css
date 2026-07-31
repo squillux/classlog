@@ -699,6 +699,49 @@ tbody td {
   white-space: pre-wrap;
 }
 
+/* ── 알고리즘 시각화 ─────────────────────────────────────────────── */
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s-xs);
+  height: 220px;
+}
+
+.bar {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 6px;
+  background: var(--ink-faint);
+  border-radius: var(--r-sm) var(--r-sm) 0 0;
+  transition: height 0.2s ease, background-color 0.2s ease;
+}
+
+.bar--comparing { background: var(--accent-orange); }
+.bar--settled { background: var(--accent-green); }
+.bar--found { background: var(--accent-pink); }
+
+.bar__value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--on-primary);
+}
+
+.player {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-xs);
+}
+
+.player__count {
+  align-self: center;
+  font-size: 14px;
+  color: var(--ink-muted);
+  margin-left: auto;
+}
+
 /* ── 반응형 ──────────────────────────────────────────────────────── */
 
 @media (max-width: 600px) {
