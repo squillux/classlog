@@ -492,6 +492,59 @@ tbody td {
   accent-color: var(--primary);
 }
 
+/* ── 미니게임 공통 ───────────────────────────────────────────────── */
+
+.reflection__question {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.125px;
+  color: var(--ink);
+}
+
+.reflection__input {
+  font-family: inherit;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.game__board {
+  background: var(--canvas-soft);
+  border-radius: var(--r-lg);
+  padding: var(--s-lg);
+}
+
+.game__status {
+  font-size: 15px;
+  color: var(--ink-secondary);
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-xs);
+}
+
+.chip {
+  font-family: inherit;
+  font-size: 15px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-full);
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.chip:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.chip[aria-pressed='true'] {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
 /* ── 반응형 ──────────────────────────────────────────────────────── */
 
 @media (max-width: 600px) {
