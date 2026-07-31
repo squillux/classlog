@@ -560,6 +560,25 @@ tbody td {
   text-align: center;
 }
 
+.river {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-lg);
+}
+
+.river__bank {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-xs);
+  min-height: 96px;
+}
+
+.chip--static {
+  background: var(--canvas-soft);
+  color: var(--ink-muted);
+  cursor: default;
+}
+
 /* ── 반응형 ──────────────────────────────────────────────────────── */
 
 @media (max-width: 600px) {
@@ -574,5 +593,9 @@ tbody td {
 
   .card {
     padding: var(--s-md);
+  }
+
+  .river {
+    grid-template-columns: 1fr;
   }
 }
