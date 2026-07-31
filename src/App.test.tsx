@@ -1,7 +1,12 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import App from './App'
+
+vi.mock('./lib/session', () => ({
+  enterClass: vi.fn(),
+  loadSession: () => null,
+}))
 
 describe('App 라우팅', () => {
   it('루트 경로에서 학급 코드 입장 화면을 보여준다', () => {

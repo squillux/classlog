@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router'
+import Home from './routes/Home'
 
 function Placeholder({ title }: { title: string }) {
   return <h1>{title}</h1>
@@ -8,7 +9,7 @@ function App() {
   return (
     <main>
       <Routes>
-        <Route path="/" element={<Placeholder title="너희 반 앱" />} />
+        <Route path="/" element={<Home />} />
         <Route path="/activities" element={<Placeholder title="활동 목록" />} />
         <Route path="/activities/:activityId" element={<Placeholder title="활동" />} />
         <Route path="/teacher" element={<Placeholder title="교사 로그인" />} />
