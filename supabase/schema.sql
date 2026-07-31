@@ -88,6 +88,10 @@ language plpgsql
 security definer
 set search_path = public
 as $$
+-- returns table(...) 의 이름들은 함수 안에서 변수로도 존재한다. 그래서
+-- on conflict (class_id, number) 의 class_id 가 컬럼인지 변수인지 모호해진다.
+-- 모호하면 컬럼을 택하도록 지시한다.
+#variable_conflict use_column
 declare
   v_class   classes%rowtype;
   v_student students%rowtype;
