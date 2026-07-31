@@ -4,6 +4,7 @@ const signInWithPassword = vi.fn()
 const getUser = vi.fn()
 const insert = vi.fn()
 const select = vi.fn()
+const del = vi.fn()
 
 vi.mock('./supabase', () => ({
   supabase: {
@@ -11,14 +12,15 @@ vi.mock('./supabase', () => ({
       signInWithPassword: (c: unknown) => signInWithPassword(c),
       getUser: () => getUser(),
     },
-    from: () => ({ insert, select: (cols: string) => select(cols) }),
+    from: () => ({ insert, select: (cols: string) => select(cols), delete: () => del() }),
   },
 }))
 
-const { signInTeacher, createClass, listClasses } = await import('./teacher')
+const { signInTeacher, createClass, listClasses, deleteClass } = await import('./teacher')
 
 beforeEach(() => {
-  signInWithPassword.mockReset(); getUser.mockReset(); insert.mockReset(); select.mockReset()
+  signInWithPassword.mockReset(); getUser.mockReset()
+  insert.mockReset(); select.mockReset(); del.mockReset()
   getUser.mockResolvedValue({ data: { user: { id: 't1' } } })
 })
 
@@ -56,6 +58,24 @@ describe('createClass', () => {
       select: () => ({ single: vi.fn().mockResolvedValue({ data: null, error: { message: '실패' } }) }),
     })
     await expect(createClass('1반')).rejects.toThrow('실패')
+  })
+})
+
+describe('deleteClass', () => {
+  it('id 로 학급을 지운다', async () => {
+    const eq = vi.fn().mockResolvedValue({ error: null })
+    del.mockReturnValue({ eq })
+
+    await deleteClass('c1')
+
+    expect(eq).toHaveBeenCalledWith('id', 'c1')
+  })
+
+  it('오류를 알린다', async () => {
+    del.mockReturnValue({
+      eq: vi.fn().mockResolvedValue({ error: { message: '권한이 없습니다' } }),
+    })
+    await expect(deleteClass('c1')).rejects.toThrow('권한이 없습니다')
   })
 })
 

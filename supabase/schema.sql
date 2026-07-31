@@ -48,6 +48,11 @@ drop policy if exists "교사는 학급을 만든다" on classes;
 create policy "교사는 학급을 만든다" on classes
   for insert with check (teacher_id = auth.uid());
 
+-- 학급을 지우면 on delete cascade 로 그 반의 학생과 제출물도 함께 사라진다.
+drop policy if exists "교사는 자기 학급을 지운다" on classes;
+create policy "교사는 자기 학급을 지운다" on classes
+  for delete using (teacher_id = auth.uid());
+
 -- 학생은 자기 행만, 교사는 자기 학급의 학생 전부
 drop policy if exists "학생은 자기 행을 읽는다" on students;
 create policy "학생은 자기 행을 읽는다" on students

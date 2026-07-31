@@ -4,18 +4,21 @@ import userEvent from '@testing-library/user-event'
 
 const listClasses = vi.fn()
 const createClass = vi.fn()
+const deleteClass = vi.fn()
 const listSubmissions = vi.fn()
 
 vi.mock('../lib/teacher', () => ({
   listClasses: () => listClasses(),
   createClass: (n: string) => createClass(n),
+  deleteClass: (id: string) => deleteClass(id),
 }))
 vi.mock('../lib/submission', () => ({ listSubmissions: (id: string) => listSubmissions(id) }))
 
 const TeacherDashboard = (await import('./TeacherDashboard')).default
 
 beforeEach(() => {
-  listClasses.mockReset(); createClass.mockReset(); listSubmissions.mockReset()
+  listClasses.mockReset(); createClass.mockReset()
+  deleteClass.mockReset(); listSubmissions.mockReset()
   listClasses.mockResolvedValue([{ id: 'c1', code: 'AB23CD', name: '1학년 3반' }])
   listSubmissions.mockResolvedValue([])
 })
@@ -63,5 +66,56 @@ describe('TeacherDashboard', () => {
     listClasses.mockResolvedValue([])
     render(<TeacherDashboard />)
     expect(await screen.findByText('학급을 먼저 만들어 주세요.')).toBeInTheDocument()
+  })
+})
+
+describe('TeacherDashboard 학급 삭제', () => {
+  it('삭제를 한 번 눌러서는 지우지 않고 확인을 묻는다', async () => {
+    const user = userEvent.setup()
+    render(<TeacherDashboard />)
+    await screen.findByText('1학년 3반')
+
+    await user.click(screen.getByRole('button', { name: '삭제' }))
+
+    expect(deleteClass).not.toHaveBeenCalled()
+    expect(screen.getByText(/학생과 제출물까지 함께 지워집니다/)).toBeInTheDocument()
+  })
+
+  it('확인을 누르면 지우고 목록에서 없앤다', async () => {
+    deleteClass.mockResolvedValue(undefined)
+    const user = userEvent.setup()
+    render(<TeacherDashboard />)
+    await screen.findByText('1학년 3반')
+
+    await user.click(screen.getByRole('button', { name: '삭제' }))
+    await user.click(screen.getByRole('button', { name: '지웁니다' }))
+
+    expect(deleteClass).toHaveBeenCalledWith('c1')
+    expect(await screen.findByText('학급을 먼저 만들어 주세요.')).toBeInTheDocument()
+  })
+
+  it('취소하면 학급이 그대로 남는다', async () => {
+    const user = userEvent.setup()
+    render(<TeacherDashboard />)
+    await screen.findByText('1학년 3반')
+
+    await user.click(screen.getByRole('button', { name: '삭제' }))
+    await user.click(screen.getByRole('button', { name: '그대로 둡니다' }))
+
+    expect(deleteClass).not.toHaveBeenCalled()
+    expect(screen.getByText('1학년 3반')).toBeInTheDocument()
+  })
+
+  it('삭제에 실패하면 알리고 목록을 유지한다', async () => {
+    deleteClass.mockRejectedValue(new Error('권한이 없습니다'))
+    const user = userEvent.setup()
+    render(<TeacherDashboard />)
+    await screen.findByText('1학년 3반')
+
+    await user.click(screen.getByRole('button', { name: '삭제' }))
+    await user.click(screen.getByRole('button', { name: '지웁니다' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('권한이 없습니다')
+    expect(screen.getByText('1학년 3반')).toBeInTheDocument()
   })
 })

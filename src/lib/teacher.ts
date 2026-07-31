@@ -22,6 +22,15 @@ export async function createClass(name: string): Promise<ClassRow> {
   return data as ClassRow
 }
 
+/**
+ * 학급을 지운다. 스키마의 on delete cascade 때문에 그 학급의 학생과
+ * 제출물도 함께 사라진다. 부르는 쪽에서 반드시 확인을 받아야 한다.
+ */
+export async function deleteClass(id: string): Promise<void> {
+  const { error } = await supabase.from('classes').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+}
+
 export async function listClasses(): Promise<ClassRow[]> {
   const { data, error } = await supabase
     .from('classes')

@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { createClass, listClasses, type ClassRow } from '../lib/teacher'
+import { createClass, deleteClass, listClasses, type ClassRow } from '../lib/teacher'
 import { listSubmissions, type SubmissionRow } from '../lib/submission'
 
 function scoreOf(payload: unknown): string {
@@ -15,6 +15,8 @@ export default function TeacherDashboard() {
   const [submissions, setSubmissions] = useState<SubmissionRow[]>([])
   const [newName, setNewName] = useState('')
   const [error, setError] = useState<string | null>(null)
+  /* 삭제를 확인받는 중인 학급. 한 번 눌러서는 지우지 않는다. */
+  const [confirming, setConfirming] = useState<string | null>(null)
 
   useEffect(() => {
     listClasses()
@@ -45,6 +47,23 @@ export default function TeacherDashboard() {
     }
   }
 
+  async function handleDelete(id: string) {
+    setError(null)
+    try {
+      await deleteClass(id)
+      const left = classes.filter((row) => row.id !== id)
+      setClasses(left)
+      setConfirming(null)
+      if (selected === id) {
+        setSelected(left[0]?.id ?? null)
+        setSubmissions([])
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '학급을 지우지 못했습니다.')
+      setConfirming(null)
+    }
+  }
+
   return (
     <div className="stack">
       <h1>교사 화면</h1>
@@ -59,13 +78,38 @@ export default function TeacherDashboard() {
         ) : (
           <ul className="plain-list stack stack--tight">
             {classes.map((row) => (
-              <li key={row.id} className="class-row">
-                <button type="button" className="btn btn--utility"
-                  aria-pressed={selected === row.id}
-                  onClick={() => setSelected(row.id)}>
-                  {row.name}
-                </button>
-                <code className="code-chip">{row.code}</code>
+              <li key={row.id}>
+                <div className="class-row">
+                  <button type="button" className="btn btn--utility"
+                    aria-pressed={selected === row.id}
+                    onClick={() => setSelected(row.id)}>
+                    {row.name}
+                  </button>
+                  <code className="code-chip">{row.code}</code>
+                  <button type="button" className="btn btn--quiet class-row__delete"
+                    onClick={() => setConfirming(row.id)}>
+                    삭제
+                  </button>
+                </div>
+
+                {confirming === row.id && (
+                  <div className="confirm">
+                    <p>
+                      <strong>{row.name}</strong> 을 지우면 그 반의
+                      학생과 제출물까지 함께 지워집니다. 되돌릴 수 없습니다.
+                    </p>
+                    <div className="confirm__actions">
+                      <button type="button" className="btn btn--utility"
+                        onClick={() => handleDelete(row.id)}>
+                        지웁니다
+                      </button>
+                      <button type="button" className="btn btn--quiet"
+                        onClick={() => setConfirming(null)}>
+                        그대로 둡니다
+                      </button>
+                    </div>
+                  </div>
+                )}
               </li>
             ))}
           </ul>

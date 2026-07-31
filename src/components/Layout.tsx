@@ -13,7 +13,10 @@ export default function Layout({ children, narrow = false }: Props) {
       <header className="app-header">
         <div className="app-header__inner">
           <Link to="/" className="wordmark">알고리즘 교실</Link>
-          <Link to="/teacher" className="btn btn--utility">교사 화면</Link>
+          <nav className="app-header__nav">
+            <Link to="/" className="btn btn--utility">학생 화면</Link>
+            <Link to="/teacher" className="btn btn--utility">교사 화면</Link>
+          </nav>
         </div>
       </header>
 

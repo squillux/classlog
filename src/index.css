@@ -91,6 +91,11 @@ p {
   gap: var(--s-md);
 }
 
+.app-header__nav {
+  display: flex;
+  gap: var(--s-xs);
+}
+
 .wordmark {
   font-size: 17px;
   font-weight: 700;
@@ -374,6 +379,27 @@ tbody td {
   display: flex;
   align-items: center;
   gap: var(--s-sm);
+}
+
+/* 삭제는 눈에 덜 띄게 오른쪽 끝으로 민다. */
+.class-row__delete {
+  margin-left: auto;
+  color: var(--ink-faint);
+}
+
+.confirm {
+  background: #fdf1ec;
+  border-radius: var(--r-md);
+  padding: var(--s-sm) var(--s-md);
+  margin-top: var(--s-xs);
+  font-size: 15px;
+  color: var(--accent-orange-deep);
+}
+
+.confirm__actions {
+  display: flex;
+  gap: var(--s-xs);
+  margin-top: var(--s-xs);
 }
 
 .class-form {
