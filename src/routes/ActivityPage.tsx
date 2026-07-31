@@ -10,10 +10,10 @@ export default function ActivityPage() {
   const [error, setError] = useState<string | null>(null)
 
   const session = loadSession()
-  if (!session) return <p>먼저 학급 코드로 들어와 주세요.</p>
+  if (!session) return <p className="muted">먼저 학급 코드로 들어와 주세요.</p>
 
   const activity = findActivity(activityId)
-  if (!activity) return <p>활동을 찾을 수 없습니다.</p>
+  if (!activity) return <p className="muted">활동을 찾을 수 없습니다.</p>
 
   async function handleSubmit(payload: unknown) {
     setError(null)
@@ -27,11 +27,13 @@ export default function ActivityPage() {
 
   const { Component } = activity
   return (
-    <section>
-      <Link to="/activities">← 활동 목록</Link>
+    <div className="stack">
+      <Link to="/activities" className="btn btn--quiet">← 활동 목록</Link>
+
       <Component onSubmit={handleSubmit} />
-      {saved && <p role="status">제출했습니다.</p>}
-      {error && <p role="alert">{error}</p>}
-    </section>
+
+      {saved && <p className="notice notice--ok" role="status">제출했습니다.</p>}
+      {error && <p className="notice notice--error" role="alert">{error}</p>}
+    </div>
   )
 }

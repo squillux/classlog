@@ -25,24 +25,37 @@ export default function Home() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>너희 반 앱</h1>
+    <div className="stack">
+      <div className="stack stack--tight">
+        <h1>수업 들어가기</h1>
+        <p className="muted">선생님이 알려준 학급 코드를 넣으세요.</p>
+      </div>
 
-      <label htmlFor="code">학급 코드</label>
-      <input id="code" value={code} onChange={(e) => setCode(e.target.value)} required />
+      <form className="card card--raised form-stack" onSubmit={handleSubmit}>
+        <div className="field">
+          <label htmlFor="code">학급 코드</label>
+          <input id="code" className="input" value={code} autoComplete="off"
+            onChange={(e) => setCode(e.target.value)} required />
+        </div>
 
-      <label htmlFor="number">번호</label>
-      <input
-        id="number" type="number" min="1" max="100" value={number}
-        onChange={(e) => setNumber(e.target.value)} required
-      />
+        <div className="field">
+          <label htmlFor="number">번호</label>
+          <input id="number" className="input" type="number" min="1" max="100"
+            value={number} onChange={(e) => setNumber(e.target.value)} required />
+        </div>
 
-      <label htmlFor="name">이름</label>
-      <input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
+        <div className="field">
+          <label htmlFor="name">이름</label>
+          <input id="name" className="input" value={name} autoComplete="off"
+            onChange={(e) => setName(e.target.value)} required />
+        </div>
 
-      {error && <p role="alert">{error}</p>}
+        {error && <p className="notice notice--error" role="alert">{error}</p>}
 
-      <button type="submit" disabled={busy}>{busy ? '들어가는 중…' : '들어가기'}</button>
-    </form>
+        <button type="submit" className="btn btn--primary btn--block" disabled={busy}>
+          {busy ? '들어가는 중…' : '들어가기'}
+        </button>
+      </form>
+    </div>
   )
 }

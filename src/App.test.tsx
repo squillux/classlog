@@ -15,7 +15,16 @@ describe('App 라우팅', () => {
         <App />
       </MemoryRouter>,
     )
-    expect(screen.getByRole('heading', { name: '너희 반 앱' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '수업 들어가기' })).toBeInTheDocument()
+  })
+
+  it('모든 화면에 앱 이름이 걸려 있다', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    )
+    expect(screen.getByRole('link', { name: '알고리즘 교실' })).toBeInTheDocument()
   })
 
   it('알 수 없는 경로에서는 안내 문구를 보여준다', () => {

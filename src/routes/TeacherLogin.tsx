@@ -24,20 +24,31 @@ export default function TeacherLogin() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>교사 로그인</h1>
+    <div className="stack">
+      <div className="stack stack--tight">
+        <h1>교사 로그인</h1>
+        <p className="muted">학급을 만들고 학생 제출물을 봅니다.</p>
+      </div>
 
-      <label htmlFor="email">이메일</label>
-      <input id="email" type="email" value={email}
-        onChange={(e) => setEmail(e.target.value)} required />
+      <form className="card card--raised form-stack" onSubmit={handleSubmit}>
+        <div className="field">
+          <label htmlFor="email">이메일</label>
+          <input id="email" className="input" type="email" value={email}
+            onChange={(e) => setEmail(e.target.value)} required />
+        </div>
 
-      <label htmlFor="password">비밀번호</label>
-      <input id="password" type="password" value={password}
-        onChange={(e) => setPassword(e.target.value)} required />
+        <div className="field">
+          <label htmlFor="password">비밀번호</label>
+          <input id="password" className="input" type="password" value={password}
+            onChange={(e) => setPassword(e.target.value)} required />
+        </div>
 
-      {error && <p role="alert">{error}</p>}
+        {error && <p className="notice notice--error" role="alert">{error}</p>}
 
-      <button type="submit" disabled={busy}>{busy ? '로그인 중…' : '로그인'}</button>
-    </form>
+        <button type="submit" className="btn btn--primary btn--block" disabled={busy}>
+          {busy ? '로그인 중…' : '로그인'}
+        </button>
+      </form>
+    </div>
   )
 }

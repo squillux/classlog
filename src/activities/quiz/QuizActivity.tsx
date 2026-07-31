@@ -22,16 +22,21 @@ export default function QuizActivity({ onSubmit }: ActivityProps) {
   }
 
   return (
-    <section>
-      <h2>퀴즈</h2>
+    <section className="stack">
+      <div className="stack stack--tight">
+        <p className="eyebrow">활동</p>
+        <h2>퀴즈 · 빈칸 채우기</h2>
+      </div>
 
-      {quizQuestions.map((question) => (
-        <fieldset key={question.id}>
-          <legend>{question.prompt}</legend>
+      {quizQuestions.map((question, i) => (
+        <fieldset key={question.id} className="card question">
+          <legend className="question__prompt">
+            <span className="badge">{i + 1}번</span> {question.prompt}
+          </legend>
 
           {question.kind === 'choice' ? (
             question.choices.map((choice, index) => (
-              <label key={choice}>
+              <label key={choice} className="choice">
                 <input
                   type="radio"
                   name={question.id}
@@ -44,6 +49,7 @@ export default function QuizActivity({ onSubmit }: ActivityProps) {
             ))
           ) : (
             <input
+              className="input"
               aria-label={question.prompt}
               value={values[question.id] ?? ''}
               onChange={(e) => set(question.id, e.target.value)}
@@ -52,10 +58,14 @@ export default function QuizActivity({ onSubmit }: ActivityProps) {
         </fieldset>
       ))}
 
-      <button type="button" onClick={handleSubmit}>제출하기</button>
+      <button type="button" className="btn btn--primary" onClick={handleSubmit}>
+        제출하기
+      </button>
 
       {result && (
-        <p>{result.total}문항 중 {result.score}문항 맞았습니다.</p>
+        <p className="notice notice--ok">
+          {result.total}문항 중 {result.score}문항 맞았습니다.
+        </p>
       )}
     </section>
   )

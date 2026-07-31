@@ -1,46 +1,453 @@
-:root {
-  --text: #08060d;
-  --bg: #fff;
+@import './styles/tokens.css';
 
-  font-family: system-ui, 'Segoe UI', 'Malgun Gothic', sans-serif;
-  line-height: 145%;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  -webkit-font-smoothing: antialiased;
+/* ── 기본 ────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #f3f4f6;
-    --bg: #16171d;
-  }
+:root {
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink);
+  /* Notion 은 밝은 문서 느낌이 핵심이라 라이트 한 가지로 간다. */
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   margin: 0;
+  background: var(--canvas-soft);
+  color: var(--ink);
 }
 
-main {
-  min-height: 100svh;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 64px;
-  box-sizing: border-box;
+/* ── 타이포 ──────────────────────────────────────────────────────── */
 
-  @media (max-width: 1024px) {
-    padding-top: 40px;
-  }
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 700;
+  color: var(--ink);
 }
 
 h1 {
-  font-size: 48px;
-  font-weight: 500;
-  letter-spacing: -1.2px;
-  margin: 0;
+  font-size: 40px;
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
 
-  @media (max-width: 1024px) {
-    font-size: 32px;
+h2 {
+  font-size: 26px;
+  line-height: 1.23;
+  letter-spacing: -0.625px;
+}
+
+h3 {
+  font-size: 22px;
+  line-height: 1.27;
+  letter-spacing: -0.25px;
+}
+
+p {
+  margin: 0;
+}
+
+.muted {
+  color: var(--ink-muted);
+  font-size: 15px;
+}
+
+.faint {
+  color: var(--ink-faint);
+  font-size: 14px;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.125px;
+  color: var(--ink-muted);
+}
+
+/* ── 뼈대 ────────────────────────────────────────────────────────── */
+
+.app-header {
+  background: var(--canvas);
+  border-bottom: 1px solid var(--hairline);
+  padding: var(--s-md);
+}
+
+.app-header__inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-md);
+}
+
+.wordmark {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.app-main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--s-xxl) var(--s-md) 64px;
+}
+
+.app-main--narrow {
+  max-width: 480px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-lg);
+}
+
+.stack--tight {
+  gap: var(--s-sm);
+}
+
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-md);
+}
+
+/* 세로 flex 안에서 버튼이 가로로 늘어나지 않게 한다. */
+.stack > .btn {
+  align-self: flex-start;
+}
+
+.stack > .btn--block {
+  align-self: stretch;
+}
+
+/* ── 카드 ────────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  padding: var(--s-lg);
+}
+
+.card--raised {
+  box-shadow: var(--shadow-1);
+}
+
+.card--soft {
+  background: var(--canvas-soft);
+  border-radius: var(--r-xl);
+  padding: var(--s-xxl);
+  text-align: center;
+}
+
+/* ── 버튼 ────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-block;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  border-radius: var(--r-full);
+  cursor: pointer;
+  /* 링크를 버튼 모양으로 쓸 때 밑줄이 남지 않게 한다. */
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.12s ease, transform 0.08s ease;
+}
+
+/* 본문 링크는 파랑 하나로만 표시한다. */
+a {
+  color: var(--primary);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn--primary {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.btn--primary:active:not(:disabled) {
+  background: var(--primary-active);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+/* 좁은 모서리(8px)의 보조 버튼. 알약 모양과 일부러 대비시킨다. */
+.btn--utility {
+  background: var(--surface);
+  color: var(--ink);
+  border-color: var(--hairline);
+  border-radius: var(--r-md);
+  padding: 6px 14px;
+  font-size: 15px;
+}
+
+.btn--utility[aria-pressed='true'] {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn--quiet {
+  background: transparent;
+  color: var(--ink-muted);
+  border-radius: var(--r-md);
+  padding: 6px 10px;
+  font-size: 15px;
+}
+
+/* ── 입력 ────────────────────────────────────────────────────────── */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-xxs);
+}
+
+.field > label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-secondary);
+}
+
+.input {
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid #dddddd;
+  /* 입력창은 알약 모양으로 만들지 않는다 — 4px 로 각지게 둔다. */
+  border-radius: var(--r-xs);
+  padding: 8px 10px;
+  width: 100%;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: var(--shadow-1);
+}
+
+/* ── 배지 · 코드 ─────────────────────────────────────────────────── */
+
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.125px;
+  color: var(--primary);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-full);
+  padding: 4px 10px;
+}
+
+.code-chip {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--ink);
+  background: var(--canvas-soft);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  padding: 3px 10px;
+}
+
+/* ── 알림 ────────────────────────────────────────────────────────── */
+
+.notice {
+  border-radius: var(--r-md);
+  padding: var(--s-sm) var(--s-md);
+  font-size: 15px;
+}
+
+.notice--error {
+  background: #fdf1ec;
+  color: var(--accent-orange);
+}
+
+.notice--ok {
+  background: #eef8f0;
+  color: var(--accent-green);
+}
+
+/* ── 표 ──────────────────────────────────────────────────────────── */
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+thead th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.125px;
+  color: var(--ink-muted);
+  background: var(--canvas-soft);
+  padding: var(--s-sm) var(--s-md);
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: var(--s-sm) var(--s-md);
+  border-top: 1px solid var(--hairline);
+  color: var(--ink-secondary);
+}
+
+/* ── 목록 ────────────────────────────────────────────────────────── */
+
+.plain-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--s-md);
+}
+
+/* 활동 카드 위의 색 띠. 장식일 뿐 의미를 담지 않는다. */
+.tile {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s ease;
+}
+
+.tile:hover {
+  box-shadow: var(--shadow-1);
+}
+
+.tile__band {
+  height: 72px;
+  background: var(--accent-sky);
+}
+
+.tile__band--purple { background: var(--accent-purple); }
+.tile__band--teal { background: var(--accent-teal); }
+.tile__band--pink { background: var(--accent-pink); }
+
+.tile__body {
+  padding: var(--s-md) var(--s-lg) var(--s-lg);
+}
+
+.class-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-sm);
+}
+
+.class-form {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s-sm);
+  padding-top: var(--s-xs);
+  border-top: 1px solid var(--hairline);
+  margin-top: var(--s-xs);
+}
+
+.class-form .field {
+  flex: 1;
+  max-width: 280px;
+}
+
+/* ── 퀴즈 ────────────────────────────────────────────────────────── */
+
+.question {
+  border: none;
+  margin: 0;
+}
+
+/* legend 는 fieldset 테두리 위에 얹히는 요소라 카드 안으로 들어가지 않는다.
+   float 로 일반 블록처럼 흐르게 만든다. */
+.question__prompt {
+  float: left;
+  width: 100%;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.125px;
+  color: var(--ink);
+  padding: 0 0 var(--s-md);
+}
+
+.question::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: var(--s-sm);
+  padding: 10px var(--s-md);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  margin-bottom: var(--s-xs);
+  cursor: pointer;
+}
+
+.choice:has(input:checked) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.choice input {
+  accent-color: var(--primary);
+}
+
+/* ── 반응형 ──────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 30px;
+    letter-spacing: -0.6px;
+  }
+
+  .app-main {
+    padding: var(--s-lg) var(--s-sm) 48px;
+  }
+
+  .card {
+    padding: var(--s-md);
   }
 }

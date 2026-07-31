@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router'
+import Layout from './components/Layout'
 import Home from './routes/Home'
 import ActivityList from './routes/ActivityList'
 import ActivityPage from './routes/ActivityPage'
@@ -7,16 +8,14 @@ import TeacherDashboard from './routes/TeacherDashboard'
 
 function App() {
   return (
-    <main>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/activities" element={<ActivityList />} />
-        <Route path="/activities/:activityId" element={<ActivityPage />} />
-        <Route path="/teacher" element={<TeacherLogin />} />
-        <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
-        <Route path="*" element={<p>페이지를 찾을 수 없습니다.</p>} />
-      </Routes>
-    </main>
+    <Routes>
+      <Route path="/" element={<Layout narrow><Home /></Layout>} />
+      <Route path="/activities" element={<Layout><ActivityList /></Layout>} />
+      <Route path="/activities/:activityId" element={<Layout><ActivityPage /></Layout>} />
+      <Route path="/teacher" element={<Layout narrow><TeacherLogin /></Layout>} />
+      <Route path="/teacher/dashboard" element={<Layout><TeacherDashboard /></Layout>} />
+      <Route path="*" element={<Layout narrow><p>페이지를 찾을 수 없습니다.</p></Layout>} />
+    </Routes>
   )
 }
 
