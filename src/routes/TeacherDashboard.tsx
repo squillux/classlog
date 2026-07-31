@@ -1,13 +1,8 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { Fragment, useEffect, useState, type FormEvent } from 'react'
 import { createClass, deleteClass, listClasses, type ClassRow } from '../lib/teacher'
 import { listSubmissions, type SubmissionRow } from '../lib/submission'
-
-function scoreOf(payload: unknown): string {
-  const p = payload as { score?: number; total?: number } | null
-  return p && typeof p.score === 'number' && typeof p.total === 'number'
-    ? `${p.score} / ${p.total}`
-    : '—'
-}
+import { findActivity } from '../activities'
+import { summarize, noteOf, detailsOf } from './submissionSummary'
 
 export default function TeacherDashboard() {
   const [classes, setClasses] = useState<ClassRow[]>([])
@@ -17,6 +12,8 @@ export default function TeacherDashboard() {
   const [error, setError] = useState<string | null>(null)
   /* 삭제를 확인받는 중인 학급. 한 번 눌러서는 지우지 않는다. */
   const [confirming, setConfirming] = useState<string | null>(null)
+  /* 속을 펼쳐 본 제출물. 한 번에 하나만 펼친다. */
+  const [opened, setOpened] = useState<string | null>(null)
 
   useEffect(() => {
     listClasses()
@@ -137,16 +134,37 @@ export default function TeacherDashboard() {
                 <tr><th>학생</th><th>활동</th><th>점수</th><th>제출 시각</th></tr>
               </thead>
               <tbody>
-                {submissions.map((row) => (
-                  <tr key={row.id}>
-                    <td>{row.studentNumber}번 {row.studentName}</td>
-                    <td>{row.activityId}</td>
-                    <td>{scoreOf(row.payload)}</td>
-                    <td className="faint">
-                      {new Date(row.createdAt).toLocaleString('ko-KR')}
-                    </td>
-                  </tr>
-                ))}
+                {submissions.map((row) => {
+                  const note = noteOf(row.payload)
+                  const details = detailsOf(row.payload)
+                  const isOpen = opened === row.id
+                  return (
+                    <Fragment key={row.id}>
+                      <tr>
+                        <td>
+                          <button type="button" className="btn btn--quiet"
+                            aria-expanded={isOpen}
+                            onClick={() => setOpened(isOpen ? null : row.id)}>
+                            {row.studentNumber}번 {row.studentName}
+                          </button>
+                        </td>
+                        <td>{findActivity(row.activityId)?.title ?? row.activityId}</td>
+                        <td>{summarize(row.payload)}</td>
+                        <td className="faint">
+                          {new Date(row.createdAt).toLocaleString('ko-KR')}
+                        </td>
+                      </tr>
+                      {isOpen && (
+                        <tr>
+                          <td colSpan={4} className="submission-detail">
+                            {note ? <p>{note}</p> : <p className="faint">쓴 설명이 없습니다.</p>}
+                            {details && <p className="faint">{details}</p>}
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
+                  )
+                })}
               </tbody>
             </table>
           </div>

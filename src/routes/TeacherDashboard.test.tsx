@@ -13,6 +13,10 @@ vi.mock('../lib/teacher', () => ({
   deleteClass: (id: string) => deleteClass(id),
 }))
 vi.mock('../lib/submission', () => ({ listSubmissions: (id: string) => listSubmissions(id) }))
+vi.mock('../activities', () => ({
+  findActivity: (id: string) =>
+    id === 'burger' ? { id: 'burger', title: '햄버거 만들기' } : undefined,
+}))
 
 const TeacherDashboard = (await import('./TeacherDashboard')).default
 
@@ -117,5 +121,55 @@ describe('TeacherDashboard 학급 삭제', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('권한이 없습니다')
     expect(screen.getByText('1학년 3반')).toBeInTheDocument()
+  })
+})
+
+describe('TeacherDashboard 제출물 펼쳐 보기', () => {
+  const submission = {
+    id: 'sub1', activityId: 'burger',
+    payload: { solved: true, attempts: 2, elapsedMs: 90_000, note: '빵이 먼저예요' },
+    createdAt: '2026-07-31T01:00:00Z', studentName: '김하늘', studentNumber: 7,
+  }
+
+  it('활동 id 대신 활동 이름을 보여준다', async () => {
+    listSubmissions.mockResolvedValue([submission])
+    render(<TeacherDashboard />)
+    expect(await screen.findByText('햄버거 만들기')).toBeInTheDocument()
+  })
+
+  it('미니게임은 점수 대신 성공 여부를 보여준다', async () => {
+    listSubmissions.mockResolvedValue([submission])
+    render(<TeacherDashboard />)
+    expect(await screen.findByText('성공')).toBeInTheDocument()
+  })
+
+  it('펼치기 전에는 학생이 쓴 설명이 안 보인다', async () => {
+    listSubmissions.mockResolvedValue([submission])
+    render(<TeacherDashboard />)
+    await screen.findByText('햄버거 만들기')
+    expect(screen.queryByText('빵이 먼저예요')).not.toBeInTheDocument()
+  })
+
+  it('줄을 누르면 설명과 기록이 펼쳐진다', async () => {
+    listSubmissions.mockResolvedValue([submission])
+    const user = userEvent.setup()
+    render(<TeacherDashboard />)
+
+    await user.click(await screen.findByRole('button', { name: /7번 김하늘/ }))
+
+    expect(screen.getByText('빵이 먼저예요')).toBeInTheDocument()
+    expect(screen.getByText('2번 시도 · 1분 30초')).toBeInTheDocument()
+  })
+
+  it('다시 누르면 접힌다', async () => {
+    listSubmissions.mockResolvedValue([submission])
+    const user = userEvent.setup()
+    render(<TeacherDashboard />)
+
+    const row = await screen.findByRole('button', { name: /7번 김하늘/ })
+    await user.click(row)
+    await user.click(row)
+
+    expect(screen.queryByText('빵이 먼저예요')).not.toBeInTheDocument()
   })
 })

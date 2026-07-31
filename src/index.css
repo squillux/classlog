@@ -602,6 +602,11 @@ tbody td {
   cursor: default;
 }
 
+.submission-detail {
+  background: var(--canvas-soft);
+  white-space: pre-wrap;
+}
+
 /* ── 반응형 ──────────────────────────────────────────────────────── */
 
 @media (max-width: 600px) {
