@@ -1,3 +1,6 @@
+-- 이 파일은 몇 번을 실행해도 같은 결과가 된다.
+-- 기존 데이터는 지우지 않는다. 정책만 지웠다 다시 만든다.
+
 -- 테이블 -----------------------------------------------------------------
 create table if not exists classes (
   id         uuid primary key default gen_random_uuid(),
@@ -33,13 +36,20 @@ alter table classes     enable row level security;
 alter table students    enable row level security;
 alter table submissions enable row level security;
 
+-- create policy 에는 if not exists 문법이 없다. 이 파일을 여러 번 돌려도
+-- 같은 결과가 되도록 만들기 전에 지운다.
+
 -- 교사는 자기 학급만
+drop policy if exists "교사는 자기 학급을 읽는다" on classes;
 create policy "교사는 자기 학급을 읽는다" on classes
   for select using (teacher_id = auth.uid());
+
+drop policy if exists "교사는 학급을 만든다" on classes;
 create policy "교사는 학급을 만든다" on classes
   for insert with check (teacher_id = auth.uid());
 
 -- 학생은 자기 행만, 교사는 자기 학급의 학생 전부
+drop policy if exists "학생은 자기 행을 읽는다" on students;
 create policy "학생은 자기 행을 읽는다" on students
   for select using (
     anon_uid = auth.uid()
@@ -47,14 +57,19 @@ create policy "학생은 자기 행을 읽는다" on students
   );
 
 -- 제출물: 학생은 자기 것만 쓰고 읽는다
+drop policy if exists "학생은 자기 제출물을 넣는다" on submissions;
 create policy "학생은 자기 제출물을 넣는다" on submissions
   for insert with check (
     student_id in (select id from students where anon_uid = auth.uid())
   );
+
+drop policy if exists "학생은 자기 제출물을 읽는다" on submissions;
 create policy "학생은 자기 제출물을 읽는다" on submissions
   for select using (
     student_id in (select id from students where anon_uid = auth.uid())
   );
+
+drop policy if exists "교사는 자기 학급 제출물을 읽는다" on submissions;
 create policy "교사는 자기 학급 제출물을 읽는다" on submissions
   for select using (
     student_id in (
