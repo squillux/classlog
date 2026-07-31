@@ -14,7 +14,7 @@ export type Blank = {
 export const RULE_BLANKS: Blank[] = [
   {
     id: 'capacity',
-    sentence: '배에는 농부 말고 한 번에 {} 개만 태울 수 있다.',
+    sentence: '배에는 농부 말고 한 번에 {}가지만 태울 수 있다.',
     accepts: ['1', '한', '하나', '일'],
   },
   {
