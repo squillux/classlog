@@ -545,6 +545,21 @@ tbody td {
   color: var(--primary);
 }
 
+.burger-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-xxs);
+}
+
+.burger-layer {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  padding: 10px var(--s-md);
+  font-size: 15px;
+  text-align: center;
+}
+
 /* ── 반응형 ──────────────────────────────────────────────────────── */
 
 @media (max-width: 600px) {
