@@ -579,6 +579,29 @@ tbody td {
   cursor: default;
 }
 
+.ttt {
+  display: grid;
+  grid-template-columns: repeat(3, 72px);
+  gap: var(--s-xxs);
+}
+
+.ttt__cell {
+  width: 72px;
+  height: 72px;
+  font-family: inherit;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  cursor: pointer;
+}
+
+.ttt__cell:disabled {
+  cursor: default;
+}
+
 /* ── 반응형 ──────────────────────────────────────────────────────── */
 
 @media (max-width: 600px) {
