@@ -1,4 +1,4 @@
-# 우리 반 앱 (classlog)
+# 너희 반 앱 (classlog)
 
 Vite + React + TypeScript 뼈대. Supabase 클라이언트가 미리 준비되어 있습니다.
 
